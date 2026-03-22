@@ -100,7 +100,6 @@ def draw_grouped_bars(grouped_bars, standard_length):
 def generate_pdf_bytes(standard_length, kerf, total_bars, waste, efficiency, grouped, fig, cuts_required):
 
     buffer = BytesIO()
-
     doc = SimpleDocTemplate(buffer, pagesize=A4)
     styles = getSampleStyleSheet()
 
@@ -118,7 +117,7 @@ def generate_pdf_bytes(standard_length, kerf, total_bars, waste, efficiency, gro
     content.append(Paragraph(f"Efficiency: {efficiency} %", styles["Normal"]))
     content.append(Spacer(1, 15))
 
-    # ✅ NEW: Input Table
+    # Input Table
     content.append(Paragraph("<b>Input Cut Details:</b>", styles["Heading2"]))
     content.append(Spacer(1, 10))
 
@@ -140,7 +139,7 @@ def generate_pdf_bytes(standard_length, kerf, total_bars, waste, efficiency, gro
     content.append(Table(data))
     content.append(Spacer(1, 20))
 
-    # Plot Image
+    # Graph Image
     img_buffer = BytesIO()
     fig.savefig(img_buffer, format="png", bbox_inches='tight')
     img_buffer.seek(0)
@@ -148,8 +147,8 @@ def generate_pdf_bytes(standard_length, kerf, total_bars, waste, efficiency, gro
     content.append(Image(img_buffer, width=500, height=250))
 
     doc.build(content)
-
     buffer.seek(0)
+
     return buffer
 
 
@@ -157,6 +156,21 @@ def generate_pdf_bytes(standard_length, kerf, total_bars, waste, efficiency, gro
 st.set_page_config(page_title="Cutting Optimizer", layout="centered")
 
 st.title("🔧 Cutting Optimization Tool")
+
+# ✅ NEW DESCRIPTION
+st.caption("Optimize cutting patterns to minimize waste and improve material efficiency.")
+
+st.markdown("""
+### 📌 About this Tool
+This tool helps optimize cutting of raw materials (like steel bars, pipes, or rods) into required lengths with minimum waste.
+
+🔹 Enter standard material length and required cut sizes  
+🔹 Automatically generates efficient cutting patterns  
+🔹 Reduces material waste and improves efficiency  
+🔹 Provides visual layout and downloadable PDF report  
+
+👉 Ideal for Manufacturing, Fabrication, and Production Planning.
+""")
 
 standard_length = st.number_input("Standard Length (mm)", value=3000)
 kerf = st.number_input("Kerf (mm)", value=10)
@@ -197,7 +211,6 @@ if st.button("Calculate"):
     fig = draw_grouped_bars(grouped, standard_length)
     st.pyplot(fig)
 
-    # ✅ PDF Download
     pdf_buffer = generate_pdf_bytes(
         standard_length,
         kerf,
@@ -215,5 +228,4 @@ if st.button("Calculate"):
         file_name="cutting_report.pdf",
         mime="application/pdf"
     )
-
-    ## Done..##
+    ##done..
